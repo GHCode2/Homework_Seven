@@ -96,7 +96,7 @@ namespace LibraryWebServer.Controllers
     {
             // Titles(isbn,Title,Author), CheckOut, Patron(name) ,Inventory(serial)  
 
-            
+
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
                 /*
@@ -118,14 +118,14 @@ namespace LibraryWebServer.Controllers
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
                             from tICP in tICPatrons.DefaultIfEmpty()
-                            select new Tuple<string, uint, string>(
+                            select new Tuple<string, string, string>(
                         t == null ? "" : t.Isbn,
-                        /*t == null ? "" : t.Title,
-                        t == null ? "" : t.Author,*/
-                        tI == null ? 0 : tI.Serial,
-                        tICP == null ? " " : tICP.Name);
+                        t == null ? "" : t.Title,
+                        t == null ? "" : t.Author);
+                /* tI == null ? 0 : tI.Serial,
+                 tICP == null ? " " : tICP.Name);*/
                 return Json(query.ToArray());
-
+            }
 
             //return Json(query.ToArray());
 
