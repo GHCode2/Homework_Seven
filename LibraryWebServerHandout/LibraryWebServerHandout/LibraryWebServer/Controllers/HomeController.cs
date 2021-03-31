@@ -42,17 +42,30 @@ namespace LibraryWebServer.Controllers
     {
       // TODO: Fill in. Determine if login is successful or not.
       bool loginSuccessful = false;
-            
-      if(!loginSuccessful)
-      {
-        return Json(new { success = false });
-      }
-      else
-      { 
-        user = name;
-        card = cardnum;
-        return Json(new { success = true });
-      }
+
+            using (Team70LibraryContext db = new Team70LibraryContext())
+            {
+                var query = from p in db.Patrons
+                            select new Tuple<string, uint>(p.Name, p.CardNum);
+                foreach (Tuple<string, uint> q in query)
+                {
+                    if (q.Item1 == name && q.Item2 == cardnum)
+                    {
+                        loginSuccessful = true;
+                    }
+                }
+
+            }
+            if (!loginSuccessful)
+            {
+                return Json(new { success = false });
+            }
+            else
+            { 
+                user = name;
+                card = cardnum;
+                return Json(new { success = true });
+            }
     }
   
 
@@ -200,7 +213,7 @@ namespace LibraryWebServer.Controllers
     public ActionResult ReturnBook(int serial)
     {
             // You may have to cast serial to a (uint)
-            var query = "";
+
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
 
