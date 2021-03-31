@@ -95,17 +95,21 @@ namespace LibraryWebServer.Controllers
                         join i in db.Inventory on t.Isbn equals i.Isbn
                         into titleInventory // left join Title and Inventory   
 
-                        from tI in titleInventory
+                        from tI in titleInventory.DefaultIfEmpty()
                         join ChOu in db.CheckedOut on tI.Serial equals ChOu.Serial
                         into tICheckedout // Left join temp table(Title and Inventory) with checkedOut  
 
-                        from tIC in tICheckedout
+                        from tIC in tICheckedout.DefaultIfEmpty()
                         join p in db.Patrons on tIC.CardNum equals p.CardNum
                         into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
-                        from tICP in tICPatrons
-                        select new Tuple<string, string, string, uint, string>(t.Isbn, t.Title, t.Author, tI.Serial, tICP.Name); 
-               
+                        from tICP in tICPatrons.DefaultIfEmpty()
+                        select new Tuple<string, string, string, uint, string>(
+                        t == null ? " " : t.Isbn,
+                        t.Title,
+                        t.Author,
+                        tI.Serial,
+                        tICP.Name);                
             }
 
 
@@ -124,26 +128,37 @@ namespace LibraryWebServer.Controllers
     [HttpPost]
     public ActionResult ListMyBooks()
     {
-            // 
-       var query = "";
-            using (Team70LibraryContext db = new Team70LibraryContext())
-            {
-                /*
+            /*
                  * select Title, Author, Inventory.Serial from Titles Left Join Inventory on
                  * Titles.ISBN = Inventory.ISBN Left JOIN CheckedOut ON
                  * Inventory.Serial = CheckedOut.Serial Left Join Patrons
                  * on CheckedOut.CardNum = Patrons.CardNum WHERE Name = 'Dan';
                  */
 
+            using (Team70LibraryContext db = new Team70LibraryContext())
+            {
+
+
                 /*Linq Command:*/
-                // Tiles Left join Inventory on isbn = isbn as i 
-                // i left join checkedOut as j
-                // j left join Patrons as s
-                // Where dan = name;
-                // select * 
+                // TODO: Implement
+                var query = from t in db.Titles
+                            join i in db.Inventory on t.Isbn equals i.Isbn
+                            into titleInventory // left join Title and Inventory   
+
+                            from tI in titleInventory
+                            join ChOu in db.CheckedOut on tI.Serial equals ChOu.Serial
+                            into tICheckedout // Left join temp table(Title and Inventory) with checkedOut  
+
+                            from tIC in tICheckedout
+                            join p in db.Patrons on tIC.CardNum equals p.CardNum
+                            into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
+
+                            from tICP in tICPatrons 
+                             // add a condition that tICP equalls user
+                            select new Tuple<string, string, string, uint, string>(t.Isbn, t.Title, t.Author, tI.Serial, tICP.Name);
             }
             // TODO: Implement
-            return Json(query.ToArray());
+            return Json(null);
     }
 
 
