@@ -129,7 +129,7 @@ namespace LibraryWebServer.Controllers
     public ActionResult ReturnBook(int serial)
     {
       // You may have to cast serial to a (uint)
-
+      //DELETE FROM CheckedOut WHERE Serial = number;
       return Json(new { success = true });
     }
     
