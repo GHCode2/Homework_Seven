@@ -117,13 +117,17 @@ namespace LibraryWebServer.Controllers
                             join p in db.Patrons on tIC.CardNum equals p.CardNum
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
-                            from tICP in tICPatrons.DefaultIfEmpty()
-                            select new Tuple<string, string, string>(
-                        t == null ? "" : t.Isbn,
-                        t == null ? "" : t.Title,
-                        t == null ? "" : t.Author);
-                /* tI == null ? 0 : tI.Serial,
-                 tICP == null ? " " : tICP.Name);*/
+                        from tICP in tICPatrons.DefaultIfEmpty()
+                        select new Tuple<string, string, string, uint, string>(t.Isbn ?? String.Empty, t.Title ?? String.Empty, t.Author ?? String.Empty, 1003, tICP.Name ?? "");
+                /*
+                select new Tuple<string, string, string, uint, string>(
+                t == null ? "" : t.Isbn,
+                t == null ? "" : t.Title,
+                t == null ? "" : t.Author,
+                tI.Serial,
+                // tI == null ? ... : tI.Serial,
+                tICP == null ? " " : tICP.Name);     
+                */
                 return Json(query.ToArray());
             }
 
