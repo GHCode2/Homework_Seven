@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LibraryWebServer;
 using LibraryWebServer.Models;
+using Remotion.Linq.Clauses;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace LibraryWebServer.Controllers
 {
@@ -38,7 +40,7 @@ namespace LibraryWebServer.Controllers
     {
       // TODO: Fill in. Determine if login is successful or not.
       bool loginSuccessful = false;
-
+            
       if(!loginSuccessful)
       {
         return Json(new { success = false });
@@ -77,12 +79,27 @@ namespace LibraryWebServer.Controllers
     [HttpPost]
     public ActionResult AllTitles()
     {
-            var query = "";
-      // TODO: Implement
-      
-      return Json(query.ToArray());
+            // Titles(isbn,Title,Author), CheckOut, Patron(name) ,Inventory(serial)  
 
-    }
+
+            var query = "";
+            using (Team70LibraryContext db = new Team70LibraryContext())
+            {
+                /*
+                 * select Titles.ISBN, Title, Author, Inventory.Serial, Name from Titles Left Join Inventory on Titles.ISBN = Inventory.ISBN Left JOIN CheckedOut ON Inventory.Serial = CheckedOut.Serial Left Join Patrons on CheckedOut.CardNum = Patrons.CardNum;
+                */
+
+               /*Linq Command:*/
+                // Tiles Left join Inventory on isbn = isbn as i 
+                // i left join checkedOut as j
+                // j left join Patrons as s
+                // select * 
+            }
+            // TODO: Implement
+
+            return Json(query.ToArray());
+
+        }
 
     /// <summary>
     /// Returns a JSON array representing all books checked out by the logged in user 
@@ -95,8 +112,26 @@ namespace LibraryWebServer.Controllers
     [HttpPost]
     public ActionResult ListMyBooks()
     {
-      // TODO: Implement
-      return Json(null);
+            // 
+       var query = "";
+            using (Team70LibraryContext db = new Team70LibraryContext())
+            {
+                /*
+                 * select Title, Author, Inventory.Serial from Titles Left Join Inventory on
+                 * Titles.ISBN = Inventory.ISBN Left JOIN CheckedOut ON
+                 * Inventory.Serial = CheckedOut.Serial Left Join Patrons
+                 * on CheckedOut.CardNum = Patrons.CardNum WHERE Name = 'Dan';
+                 */
+
+                /*Linq Command:*/
+                // Tiles Left join Inventory on isbn = isbn as i 
+                // i left join checkedOut as j
+                // j left join Patrons as s
+                // Where dan = name;
+                // select * 
+            }
+            // TODO: Implement
+            return Json(query.ToArray());
     }
 
 
@@ -111,10 +146,17 @@ namespace LibraryWebServer.Controllers
     [HttpPost]
     public ActionResult CheckOutBook(int serial)
     {
-      // You may have to cast serial to a (uint)
+            // You may have to cast serial to a (uint)
+            var query = "";
+            using (Team70LibraryContext db = new Team70LibraryContext())
+            {
+                // grab cardum from patrons = matches the name 
+                // grab serial from checkedout 
+               // update checkedout with information grabbed. 
+                // print cardnum and serial 
+            }
 
-
-        return Json(new { success = true });
+            return Json(new { success = true });
     }
 
 
@@ -128,20 +170,24 @@ namespace LibraryWebServer.Controllers
     [HttpPost]
     public ActionResult ReturnBook(int serial)
     {
-      // You may have to cast serial to a (uint)
+            // You may have to cast serial to a (uint)
+            var query = "";
+            using (Team70LibraryContext db = new Team70LibraryContext())
+            {
 
-      return Json(new { success = true });
+            }
+            return Json(new { success = true });
     }
     
     /*******************************************/
-    /****** Do not modify below this line ******/
-    /*******************************************/
+                /****** Do not modify below this line ******/
+                /*******************************************/
 
-    /// <summary>
-    /// Return the home page.
-    /// </summary>
-    /// <returns></returns>
-    public IActionResult Index()
+                /// <summary>
+                /// Return the home page.
+                /// </summary>
+                /// <returns></returns>
+                public IActionResult Index()
     {
       if(user == "" && card == -1)
         return View("Login");
