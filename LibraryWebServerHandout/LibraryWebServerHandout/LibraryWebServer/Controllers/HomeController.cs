@@ -95,8 +95,8 @@ namespace LibraryWebServer.Controllers
     public ActionResult AllTitles()
     {
             // Titles(isbn,Title,Author), CheckOut, Patron(name) ,Inventory(serial)  
-            //IQueryable<Tuple<string, string, string, uint, string>> query;
-            uint q = 0;
+
+            
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
                 /*
@@ -106,16 +106,16 @@ namespace LibraryWebServer.Controllers
                 /*Linq Command:*/
                 // TODO: Implement
                 var query = from t in db.Titles
-                        join i in db.Inventory on t.Isbn equals i.Isbn
-                        into titleInventory // left join Title and Inventory   
+                            join i in db.Inventory on t.Isbn equals i.Isbn
+                            into titleInventory // left join Title and Inventory   
 
-                        from tI in titleInventory.DefaultIfEmpty()
-                        join ChOu in db.CheckedOut on tI.Serial equals ChOu.Serial
-                        into tICheckedout // Left join temp table(Title and Inventory) with checkedOut  
+                            from tI in titleInventory.DefaultIfEmpty()
+                            join ChOu in db.CheckedOut on tI.Serial equals ChOu.Serial
+                            into tICheckedout // Left join temp table(Title and Inventory) with checkedOut  
 
-                        from tIC in tICheckedout.DefaultIfEmpty()
-                        join p in db.Patrons on tIC.CardNum equals p.CardNum
-                        into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
+                            from tIC in tICheckedout.DefaultIfEmpty()
+                            join p in db.Patrons on tIC.CardNum equals p.CardNum
+                            into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
                         from tICP in tICPatrons.DefaultIfEmpty()
                         select new Tuple<string, string, string, uint, string>(t.Isbn ?? String.Empty, t.Title ?? String.Empty, t.Author ?? String.Empty, 1003, tICP.Name ?? "");
@@ -129,7 +129,6 @@ namespace LibraryWebServer.Controllers
                 tICP == null ? " " : tICP.Name);     
                 */
                 return Json(query.ToArray());
-            }
 
 
             //return Json(query.ToArray());
@@ -153,11 +152,11 @@ namespace LibraryWebServer.Controllers
                  * Inventory.Serial = CheckedOut.Serial Left Join Patrons
                  * on CheckedOut.CardNum = Patrons.CardNum WHERE Name = 'Dan';
                  */
-
+            Tuple<string, string, string, uint, string> tester;
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
 
-
+   
                 /*Linq Command:*/
                 // TODO: Implement
                 var query = from t in db.Titles
@@ -173,10 +172,16 @@ namespace LibraryWebServer.Controllers
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
                             from tICP in tICPatrons 
-                             // add a condition that tICP equalls user
                             select new Tuple<string, string, string, uint, string>(t.Isbn, t.Title, t.Author, tI.Serial, tICP.Name);
+                foreach (Tuple<string, string, string, uint, string> q in query)
+                {
+                    if (q.Item5 == user)
+                    {
+                        
+                    }
+                }
             }
-            // TODO: Implement
+
             return Json(null);
     }
 
