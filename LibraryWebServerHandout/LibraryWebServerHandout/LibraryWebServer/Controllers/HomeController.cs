@@ -15,6 +15,7 @@ using LibraryWebServer.Models;
 using Remotion.Linq.Clauses;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Runtime.Serialization;
+using Microsoft.IdentityModel.Xml;
 
 namespace LibraryWebServer.Controllers
 {
@@ -105,11 +106,12 @@ namespace LibraryWebServer.Controllers
 
                         from tICP in tICPatrons.DefaultIfEmpty()
                         select new Tuple<string, string, string, uint, string>(
-                        t == null ? " " : t.Isbn,
-                        t.Title,
-                        t.Author,
+                        t == null ? "" : t.Isbn,
+                        t == null ? "" : t.Title,
+                        t == null ? "" : t.Author,
                         tI.Serial,
-                        tICP.Name);                
+                        // tI == null ? ... : tI.Serial,
+                        tICP == null ? " " : tICP.Name);                
             }
 
 
