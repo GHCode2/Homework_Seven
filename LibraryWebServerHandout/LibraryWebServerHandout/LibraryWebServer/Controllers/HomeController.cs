@@ -171,7 +171,7 @@ namespace LibraryWebServer.Controllers
                         tICP.Name ?? "");
                 foreach (Tuple<string, string, string, string, string> q in query)
                 {
-                    if (q.Item5 == user)
+                    if (q.Item5.Equals(user))
                     {
                         tester.Add(q);
                     }
