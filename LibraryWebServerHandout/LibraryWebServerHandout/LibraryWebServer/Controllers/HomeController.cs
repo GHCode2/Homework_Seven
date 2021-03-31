@@ -126,7 +126,9 @@ namespace LibraryWebServer.Controllers
                         tICP == null ? " " : tICP.Name);
                 return Json(query.ToArray());
 
-            }
+
+            //return Json(query.ToArray());
+
         }
 
     /// <summary>
