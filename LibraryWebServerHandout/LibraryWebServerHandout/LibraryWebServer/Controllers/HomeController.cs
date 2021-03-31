@@ -96,7 +96,7 @@ namespace LibraryWebServer.Controllers
     {
             // Titles(isbn,Title,Author), CheckOut, Patron(name) ,Inventory(serial)  
 
-            
+
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
                 /*
@@ -117,8 +117,8 @@ namespace LibraryWebServer.Controllers
                             join p in db.Patrons on tIC.CardNum equals p.CardNum
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
-                        from tICP in tICPatrons.DefaultIfEmpty()
-                        select new Tuple<string, string, string, uint, string>(t.Isbn ?? String.Empty, t.Title ?? String.Empty, t.Author ?? String.Empty, 1003, tICP.Name ?? "");
+                            from tICP in tICPatrons.DefaultIfEmpty()
+                            select new Tuple<string, string, string, string, string>(t.Isbn ?? String.Empty, t.Title ?? String.Empty, t.Author ?? String.Empty, tI.Serial.ToString() ?? "", tICP.Name ?? "");
                 /*
                 select new Tuple<string, string, string, uint, string>(
                 t == null ? "" : t.Isbn,
@@ -129,6 +129,7 @@ namespace LibraryWebServer.Controllers
                 tICP == null ? " " : tICP.Name);     
                 */
                 return Json(query.ToArray());
+            }
 
 
             //return Json(query.ToArray());
@@ -152,7 +153,7 @@ namespace LibraryWebServer.Controllers
                  * Inventory.Serial = CheckedOut.Serial Left Join Patrons
                  * on CheckedOut.CardNum = Patrons.CardNum WHERE Name = 'Dan';
                  */
-            Tuple<string, string, string, uint, string> tester;
+            List<Tuple<string, string, string, uint, string>> tester = new List<Tuple<string, string, string, uint, string>> ();
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
 
@@ -175,14 +176,14 @@ namespace LibraryWebServer.Controllers
                             select new Tuple<string, string, string, uint, string>(t.Isbn, t.Title, t.Author, tI.Serial, tICP.Name);
                 foreach (Tuple<string, string, string, uint, string> q in query)
                 {
-                    if (q.Item5 == user)
+                    if (q.Item5.Equals(user))
                     {
-                        
+                        tester.Add(q);
                     }
                 }
             }
 
-            return Json(null);
+            return Json(tester.ToArray());
     }
 
 
