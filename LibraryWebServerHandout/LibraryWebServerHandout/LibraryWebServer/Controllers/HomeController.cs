@@ -14,6 +14,7 @@ using LibraryWebServer;
 using LibraryWebServer.Models;
 using Remotion.Linq.Clauses;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using System.Runtime.Serialization;
 
 namespace LibraryWebServer.Controllers
 {
@@ -82,22 +83,33 @@ namespace LibraryWebServer.Controllers
             // Titles(isbn,Title,Author), CheckOut, Patron(name) ,Inventory(serial)  
 
 
-            var query = "";
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
                 /*
                  * select Titles.ISBN, Title, Author, Inventory.Serial, Name from Titles Left Join Inventory on Titles.ISBN = Inventory.ISBN Left JOIN CheckedOut ON Inventory.Serial = CheckedOut.Serial Left Join Patrons on CheckedOut.CardNum = Patrons.CardNum;
                 */
 
-               /*Linq Command:*/
-                // Tiles Left join Inventory on isbn = isbn as i 
-                // i left join checkedOut as j
-                // j left join Patrons as s
-                // select * 
-            }
-            // TODO: Implement
+                /*Linq Command:*/
+                // TODO: Implement
+                var query = from t in db.Titles
+                        join i in db.Inventory on t.Isbn equals i.Isbn
+                        into titleInventory // left join Title and Inventory   
 
-            return Json(query.ToArray());
+                        from tI in titleInventory
+                        join ChOu in db.CheckedOut on tI.Serial equals ChOu.Serial
+                        into tICheckedout // Left join temp table(Title and Inventory) with checkedOut  
+
+                        from tIC in tICheckedout
+                        join p in db.Patrons on tIC.CardNum equals p.CardNum
+                        into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
+
+                        from tICP in tICPatrons
+                        select new Tuple<string, string, string, uint, string>(t.Isbn, t.Title, t.Author, tI.Serial, tICP.Name); 
+               
+            }
+
+
+            return Json(null);
 
         }
 
