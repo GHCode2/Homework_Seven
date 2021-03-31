@@ -103,8 +103,7 @@ namespace LibraryWebServer.Controllers
                  * select Titles.ISBN, Title, Author, Inventory.Serial, Name from Titles Left Join Inventory on Titles.ISBN = Inventory.ISBN Left JOIN CheckedOut ON Inventory.Serial = CheckedOut.Serial Left Join Patrons on CheckedOut.CardNum = Patrons.CardNum;
                 */
 
-                /*Linq Command:*/
-                // TODO: Implement
+                // not showing up on web
                 var query = from t in db.Titles
                             join i in db.Inventory on t.Isbn equals i.Isbn
                             into titleInventory // left join Title and Inventory   
@@ -118,16 +117,12 @@ namespace LibraryWebServer.Controllers
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
                         from tICP in tICPatrons.DefaultIfEmpty()
-                        select new Tuple<string, string, string, uint, string>(t.Isbn ?? String.Empty, t.Title ?? String.Empty, t.Author ?? String.Empty, 1003, tICP.Name ?? "");
-                /*
-                select new Tuple<string, string, string, uint, string>(
-                t == null ? "" : t.Isbn,
-                t == null ? "" : t.Title,
-                t == null ? "" : t.Author,
-                tI.Serial,
-                // tI == null ? ... : tI.Serial,
-                tICP == null ? " " : tICP.Name);     
-                */
+                        select new Tuple<string, string, string, string, string>(
+                        t.Isbn ?? String.Empty, 
+                        t.Title ?? String.Empty,
+                        t.Author ?? String.Empty,
+                        tI.Serial.ToString() ?? String.Empty,
+                        tICP.Name ?? "");
                 return Json(query.ToArray());
             }
 
@@ -135,15 +130,15 @@ namespace LibraryWebServer.Controllers
 
         }
 
-    /// <summary>
-    /// Returns a JSON array representing all books checked out by the logged in user 
-    /// The logged in user is tracked by the global variable "card".
-    /// Every object in the array should contain the following fields:
-    /// {"title" (string), "author" (string), "serial" (uint) (note this is not a nullable uint) }
-    /// Every object in the list should have a valid (non-null) value for each field.
-    /// </summary>
-    /// <returns>The JSON representation of the books</returns>
-    [HttpPost]
+        /// <summary>
+        /// Returns a JSON array representing all books checked out by the logged in user 
+        /// The logged in user is tracked by the global variable "card".
+        /// Every object in the array should contain the following fields:
+        /// {"title" (string), "author" (string), "serial" (uint) (note this is not a nullable uint) }
+        /// Every object in the list should have a valid (non-null) value for each field.
+        /// </summary>
+        /// <returns>The JSON representation of the books</returns>
+        [HttpPost]
     public ActionResult ListMyBooks()
     {
             /*
@@ -152,13 +147,9 @@ namespace LibraryWebServer.Controllers
                  * Inventory.Serial = CheckedOut.Serial Left Join Patrons
                  * on CheckedOut.CardNum = Patrons.CardNum WHERE Name = 'Dan';
                  */
-            Tuple<string, string, string, uint, string> tester;
+            List<Tuple<string, string, string, string, string>> tester = new List<Tuple<string, string, string, string, string>>();
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
-
-   
-                /*Linq Command:*/
-                // TODO: Implement
                 var query = from t in db.Titles
                             join i in db.Inventory on t.Isbn equals i.Isbn
                             into titleInventory // left join Title and Inventory   
@@ -172,17 +163,22 @@ namespace LibraryWebServer.Controllers
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
                             from tICP in tICPatrons 
-                            select new Tuple<string, string, string, uint, string>(t.Isbn, t.Title, t.Author, tI.Serial, tICP.Name);
-                foreach (Tuple<string, string, string, uint, string> q in query)
+                            select new Tuple<string, string, string, string, string>(
+                                t.Isbn ?? String.Empty,
+                        t.Title ?? String.Empty,
+                        t.Author ?? String.Empty,
+                        tI.Serial.ToString() ?? String.Empty,
+                        tICP.Name ?? "");
+                foreach (Tuple<string, string, string, string, string> q in query)
                 {
                     if (q.Item5 == user)
                     {
-                        
+                        tester.Add(q);
                     }
                 }
             }
 
-            return Json(null);
+            return Json(tester.ToArray());
     }
 
 
@@ -198,12 +194,13 @@ namespace LibraryWebServer.Controllers
     public ActionResult CheckOutBook(int serial)
     {
             // You may have to cast serial to a (uint)
-            var query = "";
+            
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
+                
                 // grab cardum from patrons = matches the name 
                 // grab serial from checkedout 
-               // update checkedout with information grabbed. 
+                // update checkedout with information grabbed. 
                 // print cardnum and serial 
             }
 
