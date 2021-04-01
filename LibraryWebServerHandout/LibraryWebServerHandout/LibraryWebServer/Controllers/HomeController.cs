@@ -121,7 +121,7 @@ namespace LibraryWebServer.Controllers
                         t.Isbn ?? String.Empty, 
                         t.Title ?? String.Empty,
                         t.Author ?? String.Empty,
-                        tI.Serial.ToString() ?? String.Empty,
+                        tI.Serial.ToString() ?? "no copies",
                         tICP.Name ?? "");
                 return Json(query.ToArray());
             }
@@ -209,6 +209,7 @@ namespace LibraryWebServer.Controllers
                     }
                 }
                 db.CheckedOut.Add(checkedOutBook);
+                db.SaveChanges();
                 return Json(new { success = true });
             }
 
