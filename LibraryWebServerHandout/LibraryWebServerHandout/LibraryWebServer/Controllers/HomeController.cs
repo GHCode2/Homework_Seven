@@ -211,6 +211,7 @@ namespace LibraryWebServer.Controllers
                     }
                 }
                 db.CheckedOut.Add(checkedOutBook);
+                db.SaveChanges();
                 return Json(new { success = true });
             }
 
