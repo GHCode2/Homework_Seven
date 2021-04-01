@@ -164,11 +164,11 @@ namespace LibraryWebServer.Controllers
 
                             from tICP in tICPatrons 
                             select new Tuple<string, string, string, string, string>(
-                                t.Isbn ?? String.Empty,
-                        t.Title ?? String.Empty,
-                        t.Author ?? String.Empty,
-                        tI.Serial.ToString() ?? String.Empty,
-                        tICP.Name ?? "");
+                            t.Isbn ?? String.Empty,
+                            t.Title ?? String.Empty,
+                            t.Author ?? String.Empty,
+                            tI.Serial.ToString() ?? String.Empty,
+                            tICP.Name ?? "");
                 foreach (Tuple<string, string, string, string, string> q in query)
                 {
                     if (q.Item5.Equals(user))
@@ -197,14 +197,22 @@ namespace LibraryWebServer.Controllers
             
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
-                
-                // grab cardum from patrons = matches the name 
-                // grab serial from checkedout 
-                // update checkedout with information grabbed. 
-                // print cardnum and serial 
+                CheckedOut checkedOutBook = new CheckedOut();
+                var query = from p in db.Patrons
+                            select new Tuple <string,uint>(p.Name,p.CardNum);
+                foreach (Tuple<string, uint> q in query)
+                {
+                    if(q.Item1 == user)
+                    {
+                        checkedOutBook.CardNum = q.Item2;
+                        checkedOutBook.Serial = (uint)serial;
+                    }
+                }
+                db.CheckedOut.Add(checkedOutBook);
+                return Json(new { success = true });
             }
 
-            return Json(new { success = true });
+            
     }
 
 
