@@ -42,7 +42,7 @@ namespace LibraryWebServer.Controllers
     {
       // TODO: Fill in. Determine if login is successful or not.
       bool loginSuccessful = false;
-
+            name = name.Substring(0, 1).ToUpper() + name.Substring(1,name.Length-1);
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
                 var query = from p in db.Patrons
@@ -173,18 +173,7 @@ namespace LibraryWebServer.Controllers
                                 serial = tI != null ? (uint?)tI.Serial : null,
                             };
                 return Json(query.ToArray());
-                /*var l = query.Where(query => query.name);
-                foreach (q in query)
-                {
-                    if (q.Item5.Equals(user))
-                    {
-                        tester.Add(q);
-                    }
-                }
-                */
             }
-
-            return Json(tester.ToArray());
     }
 
 
@@ -234,10 +223,22 @@ namespace LibraryWebServer.Controllers
     public ActionResult ReturnBook(int serial)
     {
             // You may have to cast serial to a (uint)
-
+            uint uintSerial = 0;
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
-                // delete from checked table - (Only thing??) 
+                CheckedOut checkedOutBook = new CheckedOut();
+                var query = from p in db.Patrons
+                            select new Tuple<string, uint>(p.Name, p.CardNum);
+                foreach (Tuple<string, uint> q in query)
+                {
+                    if (q.Item1 == user )
+                    {
+                        checkedOutBook.CardNum = q.Item2;
+                        checkedOutBook.Serial = (uintSerial = Convert.ToUInt32(serial));
+                    }
+                }
+                db.CheckedOut.Remove(checkedOutBook);
+                db.SaveChanges();
             }
       // You may have to cast serial to a (uint)
       //DELETE FROM CheckedOut WHERE Serial = number;
