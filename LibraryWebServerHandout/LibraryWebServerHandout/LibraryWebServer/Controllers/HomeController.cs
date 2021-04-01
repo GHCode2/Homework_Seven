@@ -161,10 +161,11 @@ namespace LibraryWebServer.Controllers
                             into tICheckedout // Left join temp table(Title and Inventory) with checkedOut  
 
                             from tIC in tICheckedout
-                            join p in db.Patrons on tIC.CardNum equals p.CardNum
+                            join p in db.Patrons on tIC.CardNum equals p.CardNum 
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
-                            from tICP in tICPatrons 
+                            from tICP in tICPatrons
+                            where tICP.Name == user
                             select new Tuple<string, string, string, string, string>(
                             t.Isbn ?? String.Empty,
                             t.Title ?? String.Empty,
