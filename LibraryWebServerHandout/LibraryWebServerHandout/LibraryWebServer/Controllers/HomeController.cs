@@ -1,5 +1,5 @@
 ﻿/**
- * Authors: Daniel Kopta ,Sephora Bateman and corbin Gurnee
+ * Authors: Daniel Kopta ,Sephora Bateman and Corbin Gurnee
  * Homework seven - scaffolding
  * */
 
@@ -40,18 +40,19 @@ namespace LibraryWebServer.Controllers
     [HttpPost]
     public IActionResult CheckLogin(string name, int cardnum)
     {
-      // TODO: Fill in. Determine if login is successful or not.
-      bool loginSuccessful = false;
-            name = name.Substring(0, 1).ToUpper() + name.Substring(1,name.Length-1);
+      
+      bool loginSuccessful = false; 
+            name = name.Substring(0, 1).ToUpper() + name.Substring(1,name.Length-1); // Capitalizes the name 
             using (Team70LibraryContext db = new Team70LibraryContext())
-            {
+            { 
+                // Find patron and cardum from the database 
                 var query = from p in db.Patrons
                             select new Tuple<string, uint>(p.Name, p.CardNum);
                 foreach (Tuple<string, uint> q in query)
                 {
                     if (q.Item1 == name && q.Item2 == cardnum)
                     {
-                        loginSuccessful = true;
+                        loginSuccessful = true; // If Patrons is in the database login is a sucess.
                     }
                 }
 
@@ -94,16 +95,10 @@ namespace LibraryWebServer.Controllers
     [HttpPost]
     public ActionResult AllTitles()
     {
-            // Titles(isbn,Title,Author), CheckOut, Patron(name) ,Inventory(serial)  
-
-
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
-                /*
-                 * select Titles.ISBN, Title, Author, Inventory.Serial, Name from Titles Left Join Inventory on Titles.ISBN = Inventory.ISBN Left JOIN CheckedOut ON Inventory.Serial = CheckedOut.Serial Left Join Patrons on CheckedOut.CardNum = Patrons.CardNum;
-                */
 
-                // not showing up on web
+               //Combines all tables with null values                
                 var query = from t in db.Titles
                             join i in db.Inventory on t.Isbn equals i.Isbn
                             into titleInventory // left join Title and Inventory   
@@ -127,9 +122,6 @@ namespace LibraryWebServer.Controllers
                         };
                 return Json(query.ToArray());
             }
-
-            //return Json(query.ToArray());
-
         }
 
         /// <summary>
@@ -143,13 +135,6 @@ namespace LibraryWebServer.Controllers
         [HttpPost]
     public ActionResult ListMyBooks()
     {
-            /*
-                 * select Title, Author, Inventory.Serial from Titles Left Join Inventory on
-                 * Titles.ISBN = Inventory.ISBN Left JOIN CheckedOut ON
-                 * Inventory.Serial = CheckedOut.Serial Left Join Patrons
-                 * on CheckedOut.CardNum = Patrons.CardNum WHERE Name = 'Dan';
-                 */
-            List<Tuple<string, string, string, string, string>> tester = new List<Tuple<string, string, string, string, string>>();
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
                 var query = from t in db.Titles
@@ -165,7 +150,7 @@ namespace LibraryWebServer.Controllers
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
                             from tICP in tICPatrons
-                            where card == tIC.CardNum
+                            where card == tIC.CardNum // Gets the books that are assoicated with the cardNum 
                             select new
                             {
                                 title = t.Title ?? String.Empty,
@@ -188,7 +173,7 @@ namespace LibraryWebServer.Controllers
     [HttpPost]
     public ActionResult CheckOutBook(int serial)
     {
-            // You may have to cast serial to a (uint)
+
             uint uintSerial = 0;
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
@@ -199,11 +184,12 @@ namespace LibraryWebServer.Controllers
                 {
                     if(q.Item1 == user)
                     {
-                        checkedOutBook.CardNum = q.Item2;
+                        // If the name matches set the carNum and Serial 
+                        checkedOutBook.CardNum = q.Item2; 
                         checkedOutBook.Serial = (uintSerial = Convert.ToUInt32(serial));
                     }
                 }
-                db.CheckedOut.Add(checkedOutBook);
+                db.CheckedOut.Add(checkedOutBook);// Then adds it to the checkedOut table and saves the change.
                 db.SaveChanges();
                 return Json(new { success = true });
             }
@@ -233,32 +219,32 @@ namespace LibraryWebServer.Controllers
                 {
                     if (q.Item1 == user )
                     {
+                        // If the name matches set the carNum and Serial 
                         checkedOutBook.CardNum = q.Item2;
                         checkedOutBook.Serial = (uintSerial = Convert.ToUInt32(serial));
                     }
                 }
-                db.CheckedOut.Remove(checkedOutBook);
+                db.CheckedOut.Remove(checkedOutBook);// Then remove it to the checkedOut table and saves the change.
                 db.SaveChanges();
             }
-      // You may have to cast serial to a (uint)
-      //DELETE FROM CheckedOut WHERE Serial = number;
+
       return Json(new { success = true });
     }
     
-    /*******************************************/
-                /****** Do not modify below this line ******/
-                /*******************************************/
+/*******************************************/
+/****** Do not modify below this line ******/
+/*******************************************/
 
-                /// <summary>
-                /// Return the home page.
-                /// </summary>
-                /// <returns></returns>
-                public IActionResult Index()
+    /// <summary>
+    /// Return the home page.
+    /// </summary>
+    /// <returns></returns>
+    public IActionResult Index()
     {
-      if(user == "" && card == -1)
-        return View("Login");
+     if(user == "" && card == -1)
+       return View("Login");
 
-      return View();
+     return View();
     }
 
     /// <summary>
