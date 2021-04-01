@@ -165,20 +165,23 @@ namespace LibraryWebServer.Controllers
                             into tICPatrons // Left Join temp table(title ,inventory,checkout) with patrons
 
                             from tICP in tICPatrons
-                            where tICP.Name == user
-                            select new Tuple<string, string, string, string, string>(
-                            t.Isbn ?? String.Empty,
-                            t.Title ?? String.Empty,
-                            t.Author ?? String.Empty,
-                            tI.Serial.ToString() ?? String.Empty,
-                            tICP.Name ?? "");
-                foreach (Tuple<string, string, string, string, string> q in query)
+                            where card == tIC.CardNum
+                            select new
+                            {
+                                title = t.Title ?? String.Empty,
+                                author = t.Author ?? String.Empty,
+                                serial = tI != null ? (uint?)tI.Serial : null,
+                            };
+                return Json(query.ToArray());
+                /*var l = query.Where(query => query.name);
+                foreach (q in query)
                 {
                     if (q.Item5.Equals(user))
                     {
                         tester.Add(q);
                     }
                 }
+                */
             }
 
             return Json(tester.ToArray());
