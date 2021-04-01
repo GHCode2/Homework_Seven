@@ -194,7 +194,7 @@ namespace LibraryWebServer.Controllers
     public ActionResult CheckOutBook(int serial)
     {
             // You may have to cast serial to a (uint)
-            
+            uint uintSerial = 0;
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
                 CheckedOut checkedOutBook = new CheckedOut();
@@ -205,7 +205,7 @@ namespace LibraryWebServer.Controllers
                     if(q.Item1 == user)
                     {
                         checkedOutBook.CardNum = q.Item2;
-                        checkedOutBook.Serial = (uint)serial;
+                        checkedOutBook.Serial = (uintSerial = Convert.ToUInt32(serial));
                     }
                 }
                 db.CheckedOut.Add(checkedOutBook);
@@ -230,7 +230,7 @@ namespace LibraryWebServer.Controllers
 
             using (Team70LibraryContext db = new Team70LibraryContext())
             {
-
+                // delete from checked table - (Only thing??) 
             }
       // You may have to cast serial to a (uint)
       //DELETE FROM CheckedOut WHERE Serial = number;
