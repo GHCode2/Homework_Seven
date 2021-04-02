@@ -182,7 +182,7 @@ namespace LibraryWebServer.Controllers
                             select new Tuple <string,uint>(p.Name,p.CardNum);
                 foreach (Tuple<string, uint> q in query)
                 {
-                    if(q.Item1 == user)
+                    if(q.Item2 == card)
                     {
                         // If the name matches set the carNum and Serial 
                         checkedOutBook.CardNum = q.Item2; 
@@ -217,7 +217,7 @@ namespace LibraryWebServer.Controllers
                             select new Tuple<string, uint>(p.Name, p.CardNum);
                 foreach (Tuple<string, uint> q in query)
                 {
-                    if (q.Item1 == user )
+                    if (q.Item2 == card )
                     {
                         // If the name matches set the carNum and Serial 
                         checkedOutBook.CardNum = q.Item2;
